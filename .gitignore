@@ -1,0 +1,29 @@
+# Build outputs
+target/
+dist/
+node_modules/
+.vite/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Databases
+*.db
+*.mv.db
+
+# Environment
+.env
+.env.local
+*.pem
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
