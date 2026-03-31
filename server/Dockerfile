@@ -8,5 +8,7 @@ RUN mvn package -DskipTests -B
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
+COPY entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
 EXPOSE 8080
-CMD ["sh", "-c", "java -jar app.jar --spring.profiles.active=prod"]
+ENTRYPOINT ["/app/entrypoint.sh"]
