@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm create:*)"
+      "Bash(npm create:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(rm -f /Users/basithh/Project/QBYAZ/.git/index.lock)",
+      "Bash(git -C /Users/basithh/Project/QBYAZ add entrypoint.sh server/Dockerfile)",
+      "Bash(git -C /Users/basithh/Project/QBYAZ commit -m \"Add startup script to handle DATABASE_URL env var\")",
+      "Bash(git -C /Users/basithh/Project/QBYAZ push origin main)"
     ]
   }
 }
