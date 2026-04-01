@@ -2,6 +2,7 @@ package com.qbyaz.service;
 
 import com.qbyaz.dto.QueueStateResponse;
 import com.qbyaz.dto.TokenResponse;
+import com.qbyaz.model.Admin;
 import com.qbyaz.model.Session;
 import com.qbyaz.model.SessionStatus;
 import com.qbyaz.model.Token;
@@ -34,8 +35,9 @@ public class QueueService {
         this.notificationService = notificationService;
     }
 
-    public Session createSession(String name, String location) {
+    public Session createSession(String name, String location, Admin admin) {
         Session session = new Session(name, location, generateSlug());
+        session.setAdmin(admin);
         return sessionRepository.save(session);
     }
 

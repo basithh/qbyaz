@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { User, MessageSquare, Tag, Phone, ArrowRight, MapPin, AlertCircle } from 'lucide-react'
+
 import PageTransition from '../components/PageTransition'
 import GlassPanel from '../components/GlassPanel'
 import ShimmerButton from '../components/ShimmerButton'
@@ -64,7 +65,7 @@ export default function JoinQueue() {
   if (error && !session) {
     return (
       <PageTransition className="min-h-screen flex items-center justify-center p-4">
-        <GlassPanel className="max-w-sm text-center">
+        <GlassPanel className="max-w-sm text-center p-6">
           <AlertCircle size={48} className="text-red-400 mx-auto mb-4" />
           <h2 className="text-lg font-semibold text-white mb-2">Queue Not Found</h2>
           <p className="text-sm text-slate-400">{error}</p>
@@ -76,7 +77,7 @@ export default function JoinQueue() {
   if (session?.status === 'CLOSED') {
     return (
       <PageTransition className="min-h-screen flex items-center justify-center p-4">
-        <GlassPanel className="max-w-sm text-center">
+        <GlassPanel className="max-w-sm text-center p-6">
           <AlertCircle size={48} className="text-amber-400 mx-auto mb-4" />
           <h2 className="text-lg font-semibold text-white mb-2">Queue Closed</h2>
           <p className="text-sm text-slate-400">This session is no longer accepting new entries.</p>
@@ -106,13 +107,13 @@ export default function JoinQueue() {
         </motion.div>
 
         {/* Join Form */}
-        <GlassPanel>
+        <GlassPanel className="p-6">
           <h2 className="text-base font-semibold text-white mb-1">Join the Queue</h2>
           <p className="text-xs text-slate-400 mb-5">Fill in your details to get a token</p>
 
-          <form onSubmit={handleSubmit} className="space-y-3.5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Name *</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">Name *</label>
               <div className="relative">
                 <input
                   type="text"
@@ -120,35 +121,35 @@ export default function JoinQueue() {
                   onChange={(e) => updateForm('name', e.target.value)}
                   placeholder="Your name"
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
                     focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                 />
-                <User size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <User size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Purpose (optional)</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">Purpose (optional)</label>
               <div className="relative">
                 <input
                   type="text"
                   value={form.purpose}
                   onChange={(e) => updateForm('purpose', e.target.value)}
                   placeholder="Brief description of your visit"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
                     focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                 />
-                <MessageSquare size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <MessageSquare size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Category (optional)</label>
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">Category (optional)</label>
               <div className="relative">
                 <select
                   value={form.category}
                   onChange={(e) => updateForm('category', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white appearance-none
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white appearance-none
                     focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                 >
                   <option value="" className="bg-slate-800">General</option>
@@ -157,12 +158,12 @@ export default function JoinQueue() {
                   <option value="new-visit" className="bg-slate-800">New Visit</option>
                   <option value="urgent" className="bg-slate-800">Urgent</option>
                 </select>
-                <Tag size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+                <Tag size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
+              <label className="block text-xs font-medium text-slate-300 mb-1.5">
                 Phone (optional — for WhatsApp updates)
               </label>
               <div className="relative">
@@ -171,22 +172,23 @@ export default function JoinQueue() {
                   value={form.phone}
                   onChange={(e) => updateForm('phone', e.target.value)}
                   placeholder="+91 98765 43210"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
                     focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                 />
-                <Phone size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <Phone size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
               </div>
-              <p className="text-[10px] text-slate-500 mt-1">Opt-in to receive queue updates via WhatsApp</p>
+              <p className="text-[10px] text-slate-500 mt-1.5">Opt-in to receive queue updates via WhatsApp</p>
             </div>
 
             {error && (
-              <motion.p
+              <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-red-400 text-xs bg-red-500/10 rounded-lg px-3 py-2"
+                className="flex items-center gap-2 text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"
               >
+                <AlertCircle size={14} className="shrink-0" />
                 {error}
-              </motion.p>
+              </motion.div>
             )}
 
             <ShimmerButton

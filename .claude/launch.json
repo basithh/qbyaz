@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Spring Boot Backend",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd server && mvn spring-boot:run"],
+      "port": 8080
+    },
+    {
+      "name": "Vite Frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "client"],
+      "port": 5173
+    }
+  ]
+}

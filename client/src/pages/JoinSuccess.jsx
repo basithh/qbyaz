@@ -33,7 +33,7 @@ export default function JoinSuccess() {
         </div>
 
         {/* Token Display */}
-        <GlassPanel className="text-center mb-4">
+        <GlassPanel className="text-center mb-4 p-6">
           {/* Token Number */}
           <motion.div
             initial={{ scale: 0 }}
@@ -88,7 +88,7 @@ export default function JoinSuccess() {
         {/* Queue Info */}
         {!isDone && !isMyTurn && queueState && (
           <div className="grid grid-cols-2 gap-3">
-            <GlassPanel className="text-center !p-4">
+            <GlassPanel className="text-center p-4">
               <div className="flex items-center justify-center gap-1.5 text-slate-400 text-[10px] mb-2">
                 <Users size={12} />
                 Position
@@ -99,7 +99,7 @@ export default function JoinSuccess() {
               />
             </GlassPanel>
 
-            <GlassPanel className="text-center !p-4">
+            <GlassPanel className="text-center p-4">
               <div className="flex items-center justify-center gap-1.5 text-slate-400 text-[10px] mb-2">
                 <Clock size={12} />
                 Now Serving

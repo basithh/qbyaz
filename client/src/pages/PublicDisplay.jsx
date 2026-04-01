@@ -162,7 +162,7 @@ export default function PublicDisplay() {
       </div>
 
       {/* Footer Stats */}
-      <div className="mt-auto pt-6 flex items-center justify-center gap-8 text-xs text-slate-500">
+      <div className="mt-auto pt-6 flex items-center justify-center gap-4 sm:gap-8 text-xs text-slate-500">
         <span>Total Served: <span className="font-mono text-emerald-400">{queueState.totalServed}</span></span>
         <span>Waiting: <span className="font-mono text-indigo-400">{queueState.totalWaiting}</span></span>
         <span className="text-[10px]">QBYAZ Queue System</span>

@@ -119,7 +119,7 @@ export default function AdminDashboard() {
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden mb-4"
             >
-              <GlassPanel className="text-center">
+              <GlassPanel className="text-center p-6">
                 <QRCodeDisplay slug={slug} size={180} />
                 <p className="text-xs text-slate-500 mt-2">
                   Share: <span className="text-indigo-300 font-mono">{window.location.origin}/join/{slug}</span>
@@ -131,7 +131,7 @@ export default function AdminDashboard() {
 
         {/* Stats Bar */}
         <div className="grid grid-cols-3 gap-3 mb-4">
-          <GlassPanel className="text-center !p-3">
+          <GlassPanel className="text-center p-3">
             <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1 mb-1">
               <Clock size={10} /> Now Serving
             </div>
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
               className="text-xl text-amber-300"
             />
           </GlassPanel>
-          <GlassPanel className="text-center !p-3">
+          <GlassPanel className="text-center p-3">
             <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1 mb-1">
               <Users size={10} /> Waiting
             </div>
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
               className="text-xl text-indigo-300"
             />
           </GlassPanel>
-          <GlassPanel className="text-center !p-3">
+          <GlassPanel className="text-center p-3">
             <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1 mb-1">
               <CheckCircle2 size={10} /> Served
             </div>
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
 
         {/* Currently Serving */}
         {current && (
-          <GlassPanel className="mb-4 border-amber-500/20">
+          <GlassPanel className="mb-4 p-6 border-amber-500/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-xl bg-amber-500/20 flex items-center justify-center pulse-ring-amber">

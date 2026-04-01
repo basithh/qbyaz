@@ -7,12 +7,15 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.qbyaz.dto.CreateSessionRequest;
 import com.qbyaz.dto.SessionResponse;
+import com.qbyaz.model.Admin;
 import com.qbyaz.model.Session;
+import com.qbyaz.repository.AdminRepository;
 import com.qbyaz.service.QueueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
@@ -23,17 +26,22 @@ import java.io.IOException;
 public class SessionController {
 
     private final QueueService queueService;
+    private final AdminRepository adminRepository;
 
     @Value("${app.client-url}")
     private String clientUrl;
 
-    public SessionController(QueueService queueService) {
+    public SessionController(QueueService queueService, AdminRepository adminRepository) {
         this.queueService = queueService;
+        this.adminRepository = adminRepository;
     }
 
     @PostMapping
-    public ResponseEntity<SessionResponse> createSession(@Valid @RequestBody CreateSessionRequest request) {
-        Session session = queueService.createSession(request.getName(), request.getLocation());
+    public ResponseEntity<SessionResponse> createSession(
+            @Valid @RequestBody CreateSessionRequest request,
+            Authentication authentication) {
+        Admin admin = getAdmin(authentication);
+        Session session = queueService.createSession(request.getName(), request.getLocation(), admin);
         return ResponseEntity.ok(SessionResponse.from(session));
     }
 
@@ -44,14 +52,16 @@ public class SessionController {
     }
 
     @PostMapping("/{slug}/close")
-    public ResponseEntity<SessionResponse> closeSession(@PathVariable String slug) {
-        Session session = queueService.closeSession(slug);
+    public ResponseEntity<SessionResponse> closeSession(@PathVariable String slug, Authentication authentication) {
+        Admin admin = getAdmin(authentication);
+        Session session = queueService.getSession(slug);
+        verifyOwnership(session, admin);
+        session = queueService.closeSession(slug);
         return ResponseEntity.ok(SessionResponse.from(session));
     }
 
     @GetMapping(value = "/{slug}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getQrCode(@PathVariable String slug) throws WriterException, IOException {
-        // Verify session exists
         queueService.getSession(slug);
 
         String url = clientUrl + "/join/" + slug;
@@ -64,5 +74,17 @@ public class SessionController {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(out.toByteArray());
+    }
+
+    private Admin getAdmin(Authentication authentication) {
+        Long adminId = (Long) authentication.getPrincipal();
+        return adminRepository.findById(adminId)
+                .orElseThrow(() -> new IllegalArgumentException("Admin not found"));
+    }
+
+    private void verifyOwnership(Session session, Admin admin) {
+        if (session.getAdmin() == null || !session.getAdmin().getId().equals(admin.getId())) {
+            throw new SecurityException("You don't have permission to manage this session");
+        }
     }
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { QrCode, MapPin, Zap, ArrowRight, LayoutDashboard, Monitor } from 'lucide-react'
+import { QrCode, MapPin, Zap, ArrowRight, LayoutDashboard, Monitor, AlertCircle } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
 import GlassPanel from '../components/GlassPanel'
 import ShimmerButton from '../components/ShimmerButton'
@@ -34,7 +34,7 @@ export default function CreateSession() {
     return (
       <PageTransition className="min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-lg">
-          <GlassPanel className="text-center">
+          <GlassPanel className="text-center p-6">
             {/* Success checkmark */}
             <motion.div
               initial={{ scale: 0 }}
@@ -113,11 +113,11 @@ export default function CreateSession() {
         </motion.div>
 
         {/* Form */}
-        <GlassPanel>
+        <GlassPanel className="p-6">
           <h2 className="text-lg font-semibold text-white mb-1">Create a Queue Session</h2>
           <p className="text-sm text-slate-400 mb-6">Set up a new queue for your business</p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-1.5">
                 Session Name *
@@ -129,11 +129,11 @@ export default function CreateSession() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Morning Queue, Support Desk"
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
                     focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 focus:shadow-lg focus:shadow-indigo-500/5
                     transition-all duration-200"
                 />
-                <Zap size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <Zap size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
               </div>
             </div>
 
@@ -147,22 +147,23 @@ export default function CreateSession() {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="e.g., Room 101, Front Desk"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
                     focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 focus:shadow-lg focus:shadow-indigo-500/5
                     transition-all duration-200"
                 />
-                <MapPin size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <MapPin size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
               </div>
             </div>
 
             {error && (
-              <motion.p
+              <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-red-400 text-xs bg-red-500/10 rounded-lg px-3 py-2"
+                className="flex items-center gap-2 text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"
               >
+                <AlertCircle size={14} className="shrink-0" />
                 {error}
-              </motion.p>
+              </motion.div>
             )}
 
             <ShimmerButton

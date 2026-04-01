@@ -8,7 +8,8 @@
       "Bash(rm -f /Users/basithh/Project/QBYAZ/.git/index.lock)",
       "Bash(git -C /Users/basithh/Project/QBYAZ add entrypoint.sh server/Dockerfile)",
       "Bash(git -C /Users/basithh/Project/QBYAZ commit -m \"Add startup script to handle DATABASE_URL env var\")",
-      "Bash(git -C /Users/basithh/Project/QBYAZ push origin main)"
+      "Bash(git -C /Users/basithh/Project/QBYAZ push origin main)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

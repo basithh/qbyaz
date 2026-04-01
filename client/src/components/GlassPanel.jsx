@@ -12,7 +12,7 @@ export default function GlassPanel({ children, className = '', hover = false, on
 
   return (
     <Component
-      className={`glass rounded-2xl p-6 ${className}`}
+      className={`glass rounded-2xl ${className}`}
       onClick={onClick}
       {...hoverProps}
     >
