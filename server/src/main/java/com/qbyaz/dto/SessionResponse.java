@@ -11,6 +11,8 @@ public class SessionResponse {
     private String slug;
     private SessionStatus status;
     private LocalDateTime createdAt;
+    private long totalWaiting;
+    private long totalServed;
 
     public static SessionResponse from(Session session) {
         SessionResponse r = new SessionResponse();
@@ -23,10 +25,19 @@ public class SessionResponse {
         return r;
     }
 
+    public static SessionResponse from(Session session, long totalWaiting, long totalServed) {
+        SessionResponse r = from(session);
+        r.totalWaiting = totalWaiting;
+        r.totalServed = totalServed;
+        return r;
+    }
+
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getLocation() { return location; }
     public String getSlug() { return slug; }
     public SessionStatus getStatus() { return status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public long getTotalWaiting() { return totalWaiting; }
+    public long getTotalServed() { return totalServed; }
 }

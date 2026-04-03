@@ -9,7 +9,11 @@
       "Bash(git -C /Users/basithh/Project/QBYAZ add entrypoint.sh server/Dockerfile)",
       "Bash(git -C /Users/basithh/Project/QBYAZ commit -m \"Add startup script to handle DATABASE_URL env var\")",
       "Bash(git -C /Users/basithh/Project/QBYAZ push origin main)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s https://qbya-fcwdwplh8-basithhs-projects.vercel.app/login)",
+      "Bash(vercel ls:*)",
+      "Bash(vercel project:*)",
+      "Bash(railway variables:*)"
     ]
   }
 }

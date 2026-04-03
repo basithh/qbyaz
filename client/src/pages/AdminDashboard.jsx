@@ -1,33 +1,40 @@
 import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   SkipForward, CheckCircle2, XCircle, Users, Clock, QrCode,
-  Monitor, MapPin, Wifi, WifiOff, ChevronDown, ChevronUp, Power
+  Monitor, MapPin, Wifi, WifiOff, ChevronDown, ChevronUp, Power, ArrowLeft
 } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
-import GlassPanel from '../components/GlassPanel'
-import ShimmerButton from '../components/ShimmerButton'
+import Card from '../components/ui/Card'
+import Button from '../components/ui/Button'
+import Badge from '../components/ui/Badge'
+import ConfirmDialog from '../components/ui/ConfirmDialog'
+import Spinner from '../components/ui/Spinner'
 import QueueList from '../components/QueueList'
 import AnimatedCounter from '../components/AnimatedCounter'
 import QRCodeDisplay from '../components/QRCodeDisplay'
 import { useSSE } from '../hooks/useSSE'
+import { useToast } from '../context/ToastContext'
 import { api } from '../api/client'
 
 export default function AdminDashboard() {
   const { slug } = useParams()
   const navigate = useNavigate()
+  const toast = useToast()
   const { queueState, connected } = useSSE(slug)
   const [callingNext, setCallingNext] = useState(false)
   const [showQR, setShowQR] = useState(false)
   const [showCompleted, setShowCompleted] = useState(false)
+  const [confirmClose, setConfirmClose] = useState(false)
 
   const handleCallNext = async () => {
     setCallingNext(true)
     try {
       await api.callNext(slug)
+      toast.success('Next token called')
     } catch (err) {
-      console.error(err)
+      toast.error(err.message)
     } finally {
       setCallingNext(false)
     }
@@ -36,29 +43,27 @@ export default function AdminDashboard() {
   const handleUpdateStatus = async (tokenId, status) => {
     try {
       await api.updateTokenStatus(tokenId, status)
+      const labels = { COMPLETED: 'completed', SKIPPED: 'skipped', IN_PROGRESS: 'called' }
+      toast.success(`Token ${labels[status] || 'updated'}`)
     } catch (err) {
-      console.error(err)
+      toast.error(err.message)
     }
   }
 
   const handleCloseSession = async () => {
-    if (window.confirm('Close this queue session? No new tokens will be accepted.')) {
-      try {
-        await api.closeSession(slug)
-      } catch (err) {
-        console.error(err)
-      }
+    try {
+      await api.closeSession(slug)
+      toast.success('Session closed')
+      setConfirmClose(false)
+    } catch (err) {
+      toast.error(err.message)
     }
   }
 
   if (!queueState) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-          className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full"
-        />
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner size="lg" className="text-[var(--accent)]" />
       </div>
     )
   }
@@ -67,26 +72,26 @@ export default function AdminDashboard() {
   const current = queueState.currentlyServing
 
   return (
-    <PageTransition className="min-h-screen p-4 pb-24">
+    <PageTransition className="flex-1 p-4 sm:p-6 md:p-8 pb-24 md:pb-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
+        <Link to="/dashboard" className="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors mb-4">
+          <ArrowLeft size={14} />
+          My Queues
+        </Link>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-bold text-white">{queueState.sessionName}</h1>
-            <div className="flex items-center gap-3 mt-1">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">{queueState.sessionName}</h1>
+            <div className="flex items-center gap-3 mt-1.5">
               {queueState.sessionLocation && (
-                <span className="text-xs text-slate-400 flex items-center gap-1">
-                  <MapPin size={10} /> {queueState.sessionLocation}
+                <span className="text-xs text-[var(--text-muted)] flex items-center gap-1">
+                  <MapPin size={11} /> {queueState.sessionLocation}
                 </span>
               )}
               {connected ? (
-                <span className="flex items-center gap-1 text-[10px] text-emerald-400">
-                  <Wifi size={10} /> Live
-                </span>
+                <Badge variant="success" dot pulse>Live</Badge>
               ) : (
-                <span className="flex items-center gap-1 text-[10px] text-amber-400">
-                  <WifiOff size={10} /> Offline
-                </span>
+                <Badge variant="neutral" dot>Offline</Badge>
               )}
             </div>
           </div>
@@ -95,7 +100,7 @@ export default function AdminDashboard() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowQR(!showQR)}
-              className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-colors"
+              className="p-2.5 rounded-xl card text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
               <QrCode size={18} />
             </motion.button>
@@ -103,14 +108,14 @@ export default function AdminDashboard() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate(`/display/${slug}`)}
-              className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-colors"
+              className="p-2.5 rounded-xl card text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
               <Monitor size={18} />
             </motion.button>
           </div>
         </div>
 
-        {/* QR Code Drawer */}
+        {/* QR Drawer */}
         <AnimatePresence>
           {showQR && (
             <motion.div
@@ -119,100 +124,99 @@ export default function AdminDashboard() {
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden mb-4"
             >
-              <GlassPanel className="text-center p-6">
+              <Card className="text-center p-8">
                 <QRCodeDisplay slug={slug} size={180} />
-                <p className="text-xs text-slate-500 mt-2">
-                  Share: <span className="text-indigo-300 font-mono">{window.location.origin}/join/{slug}</span>
+                <p className="text-xs text-[var(--text-muted)] mt-3">
+                  Share: <span className="text-[var(--accent)] font-mono text-[11px]">{window.location.origin}/join/{slug}</span>
                 </p>
-              </GlassPanel>
+              </Card>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Stats Bar */}
-        <div className="grid grid-cols-3 gap-3 mb-4">
-          <GlassPanel className="text-center p-3">
-            <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1 mb-1">
-              <Clock size={10} /> Now Serving
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          <Card padding={false} className="text-center p-4">
+            <div className="text-[10px] text-[var(--text-muted)] flex items-center justify-center gap-1.5 mb-2 uppercase tracking-wider font-semibold">
+              <Clock size={10} /> Serving
             </div>
             <AnimatedCounter
               value={current?.tokenNumber ?? '—'}
-              className="text-xl text-amber-300"
+              className="text-xl gradient-text-gold"
             />
-          </GlassPanel>
-          <GlassPanel className="text-center p-3">
-            <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1 mb-1">
+          </Card>
+          <Card padding={false} className="text-center p-4">
+            <div className="text-[10px] text-[var(--text-muted)] flex items-center justify-center gap-1.5 mb-2 uppercase tracking-wider font-semibold">
               <Users size={10} /> Waiting
             </div>
             <AnimatedCounter
               value={queueState.totalWaiting}
-              className="text-xl text-indigo-300"
+              className="text-xl text-[var(--text-primary)]"
             />
-          </GlassPanel>
-          <GlassPanel className="text-center p-3">
-            <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1 mb-1">
+          </Card>
+          <Card padding={false} className="text-center p-4">
+            <div className="text-[10px] text-[var(--text-muted)] flex items-center justify-center gap-1.5 mb-2 uppercase tracking-wider font-semibold">
               <CheckCircle2 size={10} /> Served
             </div>
             <AnimatedCounter
               value={queueState.totalServed}
-              className="text-xl text-emerald-300"
+              className="text-xl text-[var(--success)]"
             />
-          </GlassPanel>
+          </Card>
         </div>
 
         {/* Currently Serving */}
         {current && (
-          <GlassPanel className="mb-4 p-6 border-amber-500/20">
+          <div className="serving-highlight rounded-2xl mb-4 p-5 sm:p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl bg-amber-500/20 flex items-center justify-center pulse-ring-amber">
-                  <span className="font-mono text-3xl font-bold text-amber-300">{current.tokenNumber}</span>
+                <div className="w-16 h-16 rounded-2xl bg-[var(--accent-light)] flex items-center justify-center pulse-gold glow-gold">
+                  <span className="font-mono text-3xl font-bold gradient-text-gold">{current.tokenNumber}</span>
                 </div>
                 <div>
-                  <p className="text-[10px] text-amber-400/70 uppercase tracking-wider font-semibold">Now Serving</p>
-                  <p className="text-white font-semibold">{current.name}</p>
-                  {current.purpose && <p className="text-xs text-slate-400">{current.purpose}</p>}
+                  <p className="text-[10px] text-[var(--accent)] uppercase tracking-wider font-semibold mb-0.5">Now Serving</p>
+                  <p className="text-[var(--text-primary)] font-semibold">{current.name}</p>
+                  {current.purpose && <p className="text-xs text-[var(--text-muted)] mt-0.5">{current.purpose}</p>}
                 </div>
               </div>
-              <ShimmerButton
-                variant="success"
+              <Button
+                variant="primary"
                 size="sm"
                 onClick={() => handleUpdateStatus(current.id, 'COMPLETED')}
-                className="flex items-center gap-1"
+                className="flex items-center gap-1.5"
               >
                 <CheckCircle2 size={14} />
                 Done
-              </ShimmerButton>
+              </Button>
             </div>
-          </GlassPanel>
+          </div>
         )}
 
-        {/* Call Next Button */}
+        {/* Call Next */}
         {!isClosed && (
-          <ShimmerButton
-            variant="primary"
+          <Button
             size="lg"
             loading={callingNext}
             onClick={handleCallNext}
             disabled={queueState.totalWaiting === 0 && !current}
-            className="w-full flex items-center justify-center gap-2 mb-4"
+            className="w-full flex items-center justify-center gap-2 mb-5"
           >
             <SkipForward size={18} />
             {current ? 'Complete & Call Next' : 'Call First Token'}
-          </ShimmerButton>
+          </Button>
         )}
 
         {isClosed && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-center mb-4">
-            <p className="text-red-300 text-sm font-semibold">Session Closed</p>
-            <p className="text-red-300/60 text-xs">No new tokens accepted</p>
-          </div>
+          <Card padding={false} className="bg-[var(--error-light)] border-[var(--error)]/15 p-4 text-center mb-5">
+            <p className="text-[var(--error)] text-sm font-semibold">Session Closed</p>
+            <p className="text-[var(--error)] opacity-50 text-xs mt-0.5">No new tokens accepted</p>
+          </Card>
         )}
 
         {/* Pending Queue */}
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
-            <Users size={14} />
+        <div className="mb-5">
+          <h3 className="text-xs font-semibold text-[var(--text-secondary)] mb-3 flex items-center gap-2 uppercase tracking-wider">
+            <Users size={13} />
             Waiting ({queueState.pending?.length || 0})
           </h3>
           <QueueList
@@ -224,7 +228,7 @@ export default function AdminDashboard() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleUpdateStatus(token.id, 'IN_PROGRESS')}
-                  className="p-1.5 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition-colors"
+                  className="p-2 rounded-xl bg-[var(--accent-light)] text-[var(--accent)] hover:bg-[var(--accent-muted)] transition-colors"
                   title="Call this token"
                 >
                   <SkipForward size={14} />
@@ -233,7 +237,7 @@ export default function AdminDashboard() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => handleUpdateStatus(token.id, 'SKIPPED')}
-                  className="p-1.5 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 transition-colors"
+                  className="p-2 rounded-xl bg-[var(--error-light)] text-[var(--error)] transition-colors"
                   title="Skip this token"
                 >
                   <XCircle size={14} />
@@ -243,14 +247,14 @@ export default function AdminDashboard() {
           />
         </div>
 
-        {/* Completed (Collapsible) */}
+        {/* Completed */}
         {queueState.completed?.length > 0 && (
           <div>
             <button
               onClick={() => setShowCompleted(!showCompleted)}
-              className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-300 transition-colors mb-2"
+              className="flex items-center gap-2 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors mb-3 uppercase tracking-wider font-semibold"
             >
-              <CheckCircle2 size={14} />
+              <CheckCircle2 size={13} />
               Completed ({queueState.completed.length})
               {showCompleted ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
@@ -271,18 +275,27 @@ export default function AdminDashboard() {
 
         {/* Close Session */}
         {!isClosed && (
-          <div className="mt-8 text-center">
+          <div className="mt-10 text-center">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={handleCloseSession}
-              className="text-xs text-red-400/60 hover:text-red-400 transition-colors flex items-center gap-1 mx-auto"
+              onClick={() => setConfirmClose(true)}
+              className="text-xs text-[var(--text-muted)] hover:text-[var(--error)] transition-colors flex items-center gap-1.5 mx-auto"
             >
               <Power size={12} />
               Close Session
             </motion.button>
           </div>
         )}
+
+        <ConfirmDialog
+          open={confirmClose}
+          onClose={() => setConfirmClose(false)}
+          onConfirm={handleCloseSession}
+          title="Close this session?"
+          description="No new tokens will be accepted. This action cannot be undone."
+          confirmText="Close Session"
+        />
       </div>
     </PageTransition>
   )

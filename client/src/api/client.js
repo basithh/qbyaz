@@ -24,6 +24,9 @@ export const api = {
     request('/auth/login', { method: 'POST', body: JSON.stringify(data) }),
 
   // Sessions
+  getSessions: () =>
+    request('/sessions'),
+
   createSession: (data) =>
     request('/sessions', { method: 'POST', body: JSON.stringify(data) }),
 

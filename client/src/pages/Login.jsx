@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Mail, Lock, ArrowRight, QrCode, AlertCircle } from 'lucide-react'
-import PageTransition from '../components/PageTransition'
-import GlassPanel from '../components/GlassPanel'
-import ShimmerButton from '../components/ShimmerButton'
+import { Mail, Lock, ArrowRight, QrCode } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/client'
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -32,96 +31,97 @@ export default function Login() {
   }
 
   return (
-    <PageTransition className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-start sm:items-center justify-center px-4 sm:px-6 py-12 sm:py-6 ambient-gold bg-[var(--surface)]">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-[420px]"
+      >
+        {/* Logo */}
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="text-center mb-10"
         >
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/25"
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 250, damping: 20, delay: 0.2 }}
+            className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--color-gold-400)] to-[var(--color-gold-600)] flex items-center justify-center mx-auto mb-4 shadow-lg"
+            style={{ boxShadow: '0 8px 24px rgba(212, 165, 40, 0.25)' }}
           >
-            <QrCode size={32} className="text-white" />
+            <QrCode size={24} className="text-white" />
           </motion.div>
-          <h1 className="text-3xl font-bold text-white mb-2">QBYAZ</h1>
-          <p className="text-slate-400 text-sm">Smart Queue Management System</p>
+          <h1 className="text-2xl font-bold gradient-text-gold mb-1">QBYAZ</h1>
+          <p className="text-[var(--text-muted)] text-xs tracking-wide">Smart Queue Management</p>
         </motion.div>
 
-        <GlassPanel className="p-6">
-          <h2 className="text-lg font-semibold text-white mb-1">Welcome Back</h2>
-          <p className="text-sm text-slate-400 mb-6">Sign in to manage your queues</p>
+        {/* Card */}
+        <div className="card-elevated rounded-2xl p-7 sm:p-8">
+          <div className="mb-7">
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-1">Welcome back</h2>
+            <p className="text-sm text-[var(--text-secondary)]">Sign in to your account</p>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Email</label>
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
-                    focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                />
-                <Mail size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
-              </div>
-            </div>
+            <Input
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              icon={Mail}
+            />
 
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
-              <div className="relative">
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
-                    focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                />
-                <Lock size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
-              </div>
-            </div>
+            <Input
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+              icon={Lock}
+            />
 
             {error && (
               <motion.div
-                initial={{ opacity: 0, y: -5 }}
+                initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"
+                className="text-sm text-[var(--error)] bg-[var(--error-light)] rounded-xl px-4 py-3"
               >
-                <AlertCircle size={14} className="shrink-0" />
                 {error}
               </motion.div>
             )}
 
-            <ShimmerButton
+            <Button
+              type="submit"
               loading={loading}
               disabled={!email.trim() || !password.trim()}
-              className="w-full flex items-center justify-center gap-2"
               size="lg"
+              className="w-full flex items-center justify-center gap-2"
             >
               Sign In
               <ArrowRight size={16} />
-            </ShimmerButton>
+            </Button>
           </form>
 
-          <p className="text-center text-sm text-slate-400 mt-6">
+          <div className="divider my-7" />
+
+          <p className="text-center text-sm text-[var(--text-secondary)]">
             Don't have an account?{' '}
-            <Link to="/register" className="text-indigo-400 hover:text-indigo-300 transition-colors">
-              Sign up
+            <Link to="/register" className="text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium transition-colors">
+              Create one
             </Link>
           </p>
-        </GlassPanel>
+        </div>
 
-        <p className="text-center text-xs text-slate-600 mt-6">
-          Powered by QBYAZ Queue System
+        <p className="text-center text-[10px] text-[var(--text-muted)] mt-8">
+          Powered by QBYAZ
         </p>
-      </div>
-    </PageTransition>
+      </motion.div>
+    </div>
   )
 }

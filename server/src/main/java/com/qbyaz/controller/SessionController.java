@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/sessions")
@@ -34,6 +35,13 @@ public class SessionController {
     public SessionController(QueueService queueService, AdminRepository adminRepository) {
         this.queueService = queueService;
         this.adminRepository = adminRepository;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<SessionResponse>> getAdminSessions(Authentication authentication) {
+        Admin admin = getAdmin(authentication);
+        List<SessionResponse> sessions = queueService.getAdminSessions(admin);
+        return ResponseEntity.ok(sessions);
     }
 
     @PostMapping

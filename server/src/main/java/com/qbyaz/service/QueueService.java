@@ -1,6 +1,7 @@
 package com.qbyaz.service;
 
 import com.qbyaz.dto.QueueStateResponse;
+import com.qbyaz.dto.SessionResponse;
 import com.qbyaz.dto.TokenResponse;
 import com.qbyaz.model.Admin;
 import com.qbyaz.model.Session;
@@ -39,6 +40,15 @@ public class QueueService {
         Session session = new Session(name, location, generateSlug());
         session.setAdmin(admin);
         return sessionRepository.save(session);
+    }
+
+    public List<SessionResponse> getAdminSessions(Admin admin) {
+        List<Session> sessions = sessionRepository.findByAdminOrderByCreatedAtDesc(admin);
+        return sessions.stream().map(session -> {
+            long waiting = tokenRepository.countBySessionIdAndStatus(session.getId(), TokenStatus.PENDING);
+            long served = tokenRepository.countBySessionIdAndStatus(session.getId(), TokenStatus.COMPLETED);
+            return SessionResponse.from(session, waiting, served);
+        }).toList();
     }
 
     public Session getSession(String slug) {

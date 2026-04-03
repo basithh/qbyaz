@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { User, MessageSquare, Tag, Phone, ArrowRight, MapPin, AlertCircle } from 'lucide-react'
-
+import { User, MessageSquare, Tag, Phone, ArrowRight, MapPin, AlertCircle, Users } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
-import GlassPanel from '../components/GlassPanel'
-import ShimmerButton from '../components/ShimmerButton'
+import Card from '../components/ui/Card'
+import Button from '../components/ui/Button'
+import Input from '../components/ui/Input'
+import Select from '../components/ui/Select'
+import Spinner from '../components/ui/Spinner'
 import { api } from '../api/client'
 
 export default function JoinQueue() {
@@ -15,12 +17,7 @@ export default function JoinQueue() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [form, setForm] = useState({
-    name: '',
-    purpose: '',
-    category: '',
-    phone: '',
-  })
+  const [form, setForm] = useState({ name: '', purpose: '', category: '', phone: '' })
 
   useEffect(() => {
     api.getSession(slug)
@@ -52,157 +49,146 @@ export default function JoinQueue() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-          className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full"
-        />
+      <div className="min-h-screen flex items-center justify-center bg-[var(--surface)]">
+        <Spinner size="lg" className="text-[var(--accent)]" />
       </div>
     )
   }
 
   if (error && !session) {
     return (
-      <PageTransition className="min-h-screen flex items-center justify-center p-4">
-        <GlassPanel className="max-w-sm text-center p-6">
-          <AlertCircle size={48} className="text-red-400 mx-auto mb-4" />
-          <h2 className="text-lg font-semibold text-white mb-2">Queue Not Found</h2>
-          <p className="text-sm text-slate-400">{error}</p>
-        </GlassPanel>
+      <PageTransition className="min-h-screen flex items-center justify-center p-4 bg-[var(--surface)]">
+        <Card variant="elevated" className="max-w-sm text-center p-8">
+          <div className="w-14 h-14 rounded-full bg-[var(--error-light)] flex items-center justify-center mx-auto mb-4">
+            <AlertCircle size={28} className="text-[var(--error)]" />
+          </div>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Queue Not Found</h2>
+          <p className="text-sm text-[var(--text-secondary)]">{error}</p>
+        </Card>
       </PageTransition>
     )
   }
 
   if (session?.status === 'CLOSED') {
     return (
-      <PageTransition className="min-h-screen flex items-center justify-center p-4">
-        <GlassPanel className="max-w-sm text-center p-6">
-          <AlertCircle size={48} className="text-amber-400 mx-auto mb-4" />
-          <h2 className="text-lg font-semibold text-white mb-2">Queue Closed</h2>
-          <p className="text-sm text-slate-400">This session is no longer accepting new entries.</p>
-        </GlassPanel>
+      <PageTransition className="min-h-screen flex items-center justify-center p-4 bg-[var(--surface)]">
+        <Card variant="elevated" className="max-w-sm text-center p-8">
+          <div className="w-14 h-14 rounded-full bg-[var(--warning-light)] flex items-center justify-center mx-auto mb-4">
+            <AlertCircle size={28} className="text-[var(--warning)]" />
+          </div>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Queue Closed</h2>
+          <p className="text-sm text-[var(--text-secondary)]">This session is no longer accepting new entries.</p>
+        </Card>
       </PageTransition>
     )
   }
 
   return (
-    <PageTransition className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-start sm:items-center justify-center px-4 sm:px-6 py-10 sm:py-6 ambient-gold bg-[var(--surface)]">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-[440px]"
+      >
         {/* Session Info */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-6"
+          className="text-center mb-8"
         >
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-indigo-500/25">
-            <User size={24} className="text-white" />
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--color-gold-400)] to-[var(--color-gold-600)] flex items-center justify-center mx-auto mb-4 shadow-lg"
+            style={{ boxShadow: '0 8px 24px rgba(212, 165, 40, 0.25)' }}
+          >
+            <Users size={24} className="text-white" />
           </div>
-          <h1 className="text-xl font-bold text-white">{session.name}</h1>
+          <h1 className="text-xl font-bold text-[var(--text-primary)]">{session.name}</h1>
           {session.location && (
-            <p className="text-slate-400 text-xs flex items-center justify-center gap-1 mt-1">
+            <p className="text-[var(--text-muted)] text-xs flex items-center justify-center gap-1.5 mt-1.5">
               <MapPin size={12} /> {session.location}
             </p>
           )}
         </motion.div>
 
-        {/* Join Form */}
-        <GlassPanel className="p-6">
-          <h2 className="text-base font-semibold text-white mb-1">Join the Queue</h2>
-          <p className="text-xs text-slate-400 mb-5">Fill in your details to get a token</p>
+        {/* Form */}
+        <Card variant="elevated" className="p-7 sm:p-8">
+          <div className="mb-7">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-1">Join the Queue</h2>
+            <p className="text-sm text-[var(--text-secondary)]">Fill in your details to get a token</p>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Name *</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => updateForm('name', e.target.value)}
-                  placeholder="Your name"
-                  required
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
-                    focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                />
-                <User size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
-              </div>
-            </div>
+            <Input
+              label="Name"
+              type="text"
+              value={form.name}
+              onChange={(e) => updateForm('name', e.target.value)}
+              placeholder="Your name"
+              required
+              icon={User}
+            />
 
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Purpose (optional)</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={form.purpose}
-                  onChange={(e) => updateForm('purpose', e.target.value)}
-                  placeholder="Brief description of your visit"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
-                    focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                />
-                <MessageSquare size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
-              </div>
-            </div>
+            <Input
+              label="Purpose"
+              optional
+              type="text"
+              value={form.purpose}
+              onChange={(e) => updateForm('purpose', e.target.value)}
+              placeholder="Brief description of your visit"
+              icon={MessageSquare}
+            />
 
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Category (optional)</label>
-              <div className="relative">
-                <select
-                  value={form.category}
-                  onChange={(e) => updateForm('category', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white appearance-none
-                    focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                >
-                  <option value="" className="bg-slate-800">General</option>
-                  <option value="consultation" className="bg-slate-800">Consultation</option>
-                  <option value="follow-up" className="bg-slate-800">Follow-up</option>
-                  <option value="new-visit" className="bg-slate-800">New Visit</option>
-                  <option value="urgent" className="bg-slate-800">Urgent</option>
-                </select>
-                <Tag size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
-              </div>
-            </div>
+            <Select
+              label="Category"
+              optional
+              value={form.category}
+              onChange={(e) => updateForm('category', e.target.value)}
+            >
+              <option value="">General</option>
+              <option value="consultation">Consultation</option>
+              <option value="follow-up">Follow-up</option>
+              <option value="new-visit">New Visit</option>
+              <option value="urgent">Urgent</option>
+            </Select>
 
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                Phone (optional — for WhatsApp updates)
-              </label>
-              <div className="relative">
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => updateForm('phone', e.target.value)}
-                  placeholder="+91 98765 43210"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 pr-10 py-3 text-sm text-white placeholder-slate-500
-                    focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                />
-                <Phone size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
-              </div>
-              <p className="text-[10px] text-slate-500 mt-1.5">Opt-in to receive queue updates via WhatsApp</p>
-            </div>
+            <Input
+              label="Phone"
+              optional
+              type="tel"
+              value={form.phone}
+              onChange={(e) => updateForm('phone', e.target.value)}
+              placeholder="+91 98765 43210"
+              icon={Phone}
+              helper="Opt-in to receive queue updates via WhatsApp"
+            />
 
             {error && (
               <motion.div
-                initial={{ opacity: 0, y: -5 }}
+                initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3"
+                className="text-sm text-[var(--error)] bg-[var(--error-light)] rounded-xl px-4 py-3"
               >
-                <AlertCircle size={14} className="shrink-0" />
                 {error}
               </motion.div>
             )}
 
-            <ShimmerButton
+            <Button
+              type="submit"
               loading={submitting}
               disabled={!form.name.trim()}
-              className="w-full flex items-center justify-center gap-2"
               size="lg"
+              className="w-full flex items-center justify-center gap-2"
             >
               Join Queue
               <ArrowRight size={16} />
-            </ShimmerButton>
+            </Button>
           </form>
-        </GlassPanel>
-      </div>
-    </PageTransition>
+        </Card>
+
+        <p className="text-center text-[10px] text-[var(--text-muted)] mt-8">
+          Powered by QBYAZ
+        </p>
+      </motion.div>
+    </div>
   )
 }
