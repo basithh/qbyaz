@@ -15,22 +15,23 @@ export default function MobileHeader() {
   }
 
   return (
-    <header className="md:hidden sticky top-0 z-40 bg-[var(--surface)]/95 backdrop-blur-lg border-b border-[var(--border-subtle)]">
-      <div className="flex items-center justify-between px-4 h-14">
+    <header className="md:hidden sticky top-0 z-40 bg-[var(--surface)]/95 backdrop-blur-xl border-b border-[var(--border-subtle)]">
+      <div className="flex items-center justify-between px-5 h-16">
         <Link to="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--color-gold-400)] to-[var(--color-gold-600)] flex items-center justify-center">
-            <QrCode size={13} className="text-white" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[var(--color-gold-400)] to-[var(--color-gold-600)] flex items-center justify-center"
+            style={{ boxShadow: '0 3px 12px rgba(212, 165, 40, 0.2)' }}>
+            <QrCode size={14} className="text-white" />
           </div>
-          <span className="font-bold text-sm text-[var(--text-primary)]">QBYAZ</span>
+          <span className="font-bold text-[15px] text-[var(--text-primary)] tracking-wide">QBYAZ</span>
         </Link>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
           <Avatar name={user?.name} size="xs" />
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleLogout}
-            className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--error)] transition-colors"
+            className="p-2.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--error)] transition-colors"
           >
             <LogOut size={16} />
           </motion.button>

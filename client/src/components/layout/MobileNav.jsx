@@ -11,7 +11,7 @@ const items = [
 export default function MobileNav() {
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 mobile-nav">
-      <div className="flex items-center justify-around px-2 py-1 safe-area-bottom">
+      <div className="flex items-center justify-around px-3 py-1.5 safe-area-bottom">
         {items.map(item => (
           <NavLink
             key={item.to}
@@ -21,7 +21,7 @@ export default function MobileNav() {
               `mobile-nav-item flex-1 ${isActive ? 'active' : ''}`
             }
           >
-            <item.icon size={20} />
+            <item.icon size={21} />
             <span>{item.label}</span>
           </NavLink>
         ))}

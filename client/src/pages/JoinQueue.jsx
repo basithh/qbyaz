@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { User, MessageSquare, Tag, Phone, ArrowRight, MapPin, AlertCircle, Users } from 'lucide-react'
+import { User, MessageSquare, Tag, Phone, ArrowRight, MapPin, AlertCircle, Users, QrCode } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -57,13 +57,13 @@ export default function JoinQueue() {
 
   if (error && !session) {
     return (
-      <PageTransition className="min-h-screen flex items-center justify-center p-4 bg-[var(--surface)]">
-        <Card variant="elevated" className="max-w-sm text-center p-8">
-          <div className="w-14 h-14 rounded-full bg-[var(--error-light)] flex items-center justify-center mx-auto mb-4">
-            <AlertCircle size={28} className="text-[var(--error)]" />
+      <PageTransition className="min-h-screen flex items-center justify-center p-6 bg-[var(--surface)]">
+        <Card variant="elevated" className="max-w-sm text-center p-10 sm:p-12">
+          <div className="w-18 h-18 rounded-2xl bg-[var(--error-light)] flex items-center justify-center mx-auto mb-6" style={{ width: 72, height: 72 }}>
+            <AlertCircle size={32} className="text-[var(--error)]" />
           </div>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Queue Not Found</h2>
-          <p className="text-sm text-[var(--text-secondary)]">{error}</p>
+          <h2 className="text-2xl font-extrabold text-[var(--text-primary)] mb-3 tracking-tight">Queue Not Found</h2>
+          <p className="text-[var(--text-secondary)] text-[15px]">{error}</p>
         </Card>
       </PageTransition>
     )
@@ -71,53 +71,55 @@ export default function JoinQueue() {
 
   if (session?.status === 'CLOSED') {
     return (
-      <PageTransition className="min-h-screen flex items-center justify-center p-4 bg-[var(--surface)]">
-        <Card variant="elevated" className="max-w-sm text-center p-8">
-          <div className="w-14 h-14 rounded-full bg-[var(--warning-light)] flex items-center justify-center mx-auto mb-4">
-            <AlertCircle size={28} className="text-[var(--warning)]" />
+      <PageTransition className="min-h-screen flex items-center justify-center p-6 bg-[var(--surface)]">
+        <Card variant="elevated" className="max-w-sm text-center p-10 sm:p-12">
+          <div className="w-18 h-18 rounded-2xl bg-[var(--warning-light)] flex items-center justify-center mx-auto mb-6" style={{ width: 72, height: 72 }}>
+            <AlertCircle size={32} className="text-[var(--warning)]" />
           </div>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">Queue Closed</h2>
-          <p className="text-sm text-[var(--text-secondary)]">This session is no longer accepting new entries.</p>
+          <h2 className="text-2xl font-extrabold text-[var(--text-primary)] mb-3 tracking-tight">Queue Closed</h2>
+          <p className="text-[var(--text-secondary)] text-[15px]">This session is no longer accepting new entries.</p>
         </Card>
       </PageTransition>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-start sm:items-center justify-center px-4 sm:px-6 py-10 sm:py-6 ambient-gold bg-[var(--surface)]">
+    <div className="min-h-screen flex items-start sm:items-center justify-center px-5 sm:px-8 py-12 sm:py-8 ambient-gold bg-[var(--surface)]">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-[440px]"
+        className="w-full max-w-[480px]"
       >
         {/* Session Info */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="text-center mb-10"
         >
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--color-gold-400)] to-[var(--color-gold-600)] flex items-center justify-center mx-auto mb-4 shadow-lg"
-            style={{ boxShadow: '0 8px 24px rgba(212, 165, 40, 0.25)' }}
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-gold-400)] to-[var(--color-gold-600)] flex items-center justify-center mx-auto mb-5 shadow-lg"
+            style={{ boxShadow: '0 8px 32px rgba(212, 165, 40, 0.3)' }}
           >
-            <Users size={24} className="text-white" />
+            <Users size={28} className="text-white" />
           </div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">{session.name}</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)] tracking-tight">{session.name}</h1>
           {session.location && (
-            <p className="text-[var(--text-muted)] text-xs flex items-center justify-center gap-1.5 mt-1.5">
-              <MapPin size={12} /> {session.location}
+            <p className="text-[var(--text-muted)] text-sm flex items-center justify-center gap-1.5 mt-2">
+              <MapPin size={13} /> {session.location}
             </p>
           )}
         </motion.div>
 
         {/* Form */}
-        <Card variant="elevated" className="p-7 sm:p-8">
-          <div className="mb-7">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-1">Join the Queue</h2>
-            <p className="text-sm text-[var(--text-secondary)]">Fill in your details to get a token</p>
+        <Card variant="elevated" className="p-8 sm:p-10 relative overflow-hidden">
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--color-gold-500)] opacity-[0.04] rounded-full blur-[60px] pointer-events-none" />
+
+          <div className="mb-8 relative z-10">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[var(--text-primary)] mb-1.5 tracking-tight">Join the Queue</h2>
+            <p className="text-[var(--text-secondary)] text-[15px]">Fill in your details to get a token</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
             <Input
               label="Name"
               type="text"
@@ -166,27 +168,29 @@ export default function JoinQueue() {
               <motion.div
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-sm text-[var(--error)] bg-[var(--error-light)] rounded-xl px-4 py-3"
+                className="text-sm font-medium text-[var(--error)] bg-[var(--error-light)] border border-[rgba(220,38,38,0.15)] rounded-2xl px-5 py-4"
               >
                 {error}
               </motion.div>
             )}
 
-            <Button
-              type="submit"
-              loading={submitting}
-              disabled={!form.name.trim()}
-              size="lg"
-              className="w-full flex items-center justify-center gap-2"
-            >
-              Join Queue
-              <ArrowRight size={16} />
-            </Button>
+            <div className="pt-2">
+              <Button
+                type="submit"
+                loading={submitting}
+                disabled={!form.name.trim()}
+                size="lg"
+                className="w-full flex items-center justify-center gap-2"
+              >
+                Join Queue
+                <ArrowRight size={16} />
+              </Button>
+            </div>
           </form>
         </Card>
 
-        <p className="text-center text-[10px] text-[var(--text-muted)] mt-8">
-          Powered by QBYAZ
+        <p className="text-center text-[11px] text-[var(--text-muted)] mt-10">
+          Powered by <span className="font-semibold gradient-text-gold">QBYAZ</span>
         </p>
       </motion.div>
     </div>

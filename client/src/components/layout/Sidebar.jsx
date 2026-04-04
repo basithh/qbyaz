@@ -22,17 +22,18 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="hidden md:flex w-[240px] shrink-0 flex-col h-screen sticky top-0 bg-[var(--sidebar-bg)] border-r border-[var(--sidebar-border)]">
+    <aside className="hidden md:flex w-[260px] shrink-0 flex-col h-screen sticky top-0 bg-[var(--sidebar-bg)] border-r border-[var(--sidebar-border)]">
       {/* Logo */}
-      <div className="px-5 h-16 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--color-gold-400)] to-[var(--color-gold-600)] flex items-center justify-center shadow-sm">
-          <QrCode size={15} className="text-white" />
+      <div className="px-6 h-[72px] flex items-center gap-3">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--color-gold-400)] to-[var(--color-gold-600)] flex items-center justify-center shadow-sm"
+          style={{ boxShadow: '0 4px 16px rgba(212, 165, 40, 0.2)' }}>
+          <QrCode size={16} className="text-white" />
         </div>
-        <span className="font-bold text-sm tracking-wide text-[var(--text-primary)]">QBYAZ</span>
+        <span className="font-bold text-[15px] tracking-wide text-[var(--text-primary)]">QBYAZ</span>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-2 space-y-1">
+      <nav className="flex-1 px-4 py-3 space-y-1.5">
         {navItems.map(item => (
           <NavLink
             key={item.to}
@@ -49,25 +50,25 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-3 pb-4 space-y-2">
+      <div className="px-4 pb-5 space-y-3">
         <div className="flex items-center justify-between px-2">
           <ThemeToggle />
         </div>
         <div className="divider" />
-        <div className="flex items-center gap-3 px-3 py-2">
+        <div className="flex items-center gap-3 px-3 py-3">
           <Avatar name={user?.name} size="sm" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-[var(--text-primary)] truncate">{user?.name}</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)] truncate">{user?.name}</p>
             <p className="text-[11px] text-[var(--text-muted)] truncate">{user?.email}</p>
           </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleLogout}
-            className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--error)] hover:bg-[var(--error-light)] transition-colors"
+            className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--error)] hover:bg-[var(--error-light)] transition-colors"
             title="Logout"
           >
-            <LogOut size={15} />
+            <LogOut size={16} />
           </motion.button>
         </div>
       </div>
